@@ -3,7 +3,8 @@
     FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
         texts: [{ key: 'p:t', replacement: 'Froala pretext plugin to automatically replace text with other text and highlight ***** martkers by pressing defined key'}],
         marker: '*****',
-        keycode: 17 // The control key
+        keycode: 17, // The control key
+        element: 'editor'
     });
 
     FroalaEditor.PLUGINS.pretext = function (editor) {
@@ -61,8 +62,14 @@
 
         function _init() {
             currentPosition = -1;
+
+            if (editor.opts.keycode==9) { // If Tab key is chosen, then disable default behaviour
+                $("#"+editor.opts.element).on('keydown', function (e) {
+                    if (e.which == 9) { e.preventDefault(); }
+                });
+            }
+
             editor.events.on('keydown', function (params) {
-                console.log(params.keyCode);
                 if (params.keyCode == editor.opts.keycode) {
                     editor.selection.save(); 
                     editor.html.set(_selectParam(editor.html.get()));
